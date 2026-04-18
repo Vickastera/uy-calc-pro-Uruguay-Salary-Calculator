@@ -1,5 +1,3 @@
-let lastResult = null;
-
 function calculateIRPF(income) {
   let tax = 0;
 
@@ -26,77 +24,67 @@ function calculateFONASA(income) {
   return income * 0.06;
 }
 
-function aguinaldo(income) {
-  return income / 12;
-}
-
-function renuncia(income, years = 2) {
-  return income * years * 0.1;
-}
-
-function calculateNet(income, children) {
-  let irpf = calculateIRPF(income);
+function calculateNetSalary(income) {
+  const irpf = calculateIRPF(income);
   const fonasa = calculateFONASA(income);
+  const aguinaldo = income / 12;
+  const renuncia = income * 0.2;
 
-  if (children) irpf *= 0.9;
-
-  const descuentos = irpf + fonasa;
+  const total = irpf + fonasa;
 
   return {
-    bruto: income,
     irpf,
     fonasa,
-    neto: income - descuentos,
-    aguinaldo: aguinaldo(income),
-    renuncia: renuncia(income)
+    aguinaldo,
+    renuncia,
+    neto: income - total
   };
 }
 
 function calculate() {
   const salary = Number(document.getElementById("salary").value);
-  const children = document.getElementById("children").checked;
 
-  if (!salary) return;
+  if (!salary) {
+    document.getElementById("result").innerHTML = "Ingresá un sueldo válido";
+    return;
+  }
 
-  const r = calculateNet(salary, children);
-  lastResult = r;
+  const result = calculateNetSalary(salary);
 
   document.getElementById("result").innerHTML = `
-    <p>💰 Bruto: $${r.bruto}</p>
-    <p>🏥 FONASA: $${r.fonasa.toFixed(2)}</p>
-    <p>📊 IRPF: $${r.irpf.toFixed(2)}</p>
-    <p>🎁 Aguinaldo: $${r.aguinaldo.toFixed(2)}</p>
-    <p>🚪 Renuncia estimada: $${r.renuncia.toFixed(2)}</p>
+    💰 IRPF: $${result.irpf.toFixed(2)}<br>
+    🏥 FONASA: $${result.fonasa.toFixed(2)}<br>
+    🎁 Aguinaldo: $${result.aguinaldo.toFixed(2)}<br>
+    🚪 Renuncia: $${result.renuncia.toFixed(2)}<br>
     <hr>
-    <h2>🧾 Neto: $${r.neto.toFixed(2)}</h2>
+    🧾 Neto: $${result.neto.toFixed(2)}
   `;
 
-  drawChart(r);
+  // cargar PDF data
+  document.getElementById("p-bruto").innerText = salary;
+  document.getElementById("p-irpf").innerText = result.irpf.toFixed(2);
+  document.getElementById("p-fonasa").innerText = result.fonasa.toFixed(2);
+  document.getElementById("p-aguinaldo").innerText = result.aguinaldo.toFixed(2);
+  document.getElementById("p-renuncia").innerText = result.renuncia.toFixed(2);
+  document.getElementById("p-neto").innerText = result.neto.toFixed(2);
 }
 
-function drawChart(r) {
-  new Chart(document.getElementById("chart"), {
-    type: "bar",
-    data: {
-      labels: ["Bruto", "IRPF", "FONASA", "Neto"],
-      datasets: [{
-        data: [r.bruto, r.irpf, r.fonasa, r.neto]
-      }]
-    }
+async function downloadPDF() {
+  const element = document.getElementById("pdf");
+
+  const canvas = await html2canvas(element, {
+    scale: 2
   });
-}
 
-function downloadPDF() {
-  if (!lastResult) return;
+  const imgData = canvas.toDataURL("image/png");
 
   const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const pdf = new jsPDF("p", "mm", "a4");
 
-  doc.text("Resumen Sueldo Uruguay", 10, 10);
-  doc.text(`Bruto: ${lastResult.bruto}`, 10, 20);
-  doc.text(`IRPF: ${lastResult.irpf.toFixed(2)}`, 10, 30);
-  doc.text(`FONASA: ${lastResult.fonasa.toFixed(2)}`, 10, 40);
-  doc.text(`Neto: ${lastResult.neto.toFixed(2)}`, 10, 50);
+  const imgWidth = 190;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-  doc.save("sueldo.pdf");
+  pdf.addImage(imgData, "PNG", 10, 10, imgWidth, imgHeight);
+
+  pdf.save("sueldo-uruguay-pro.pdf");
 }
