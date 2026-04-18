@@ -1,7 +1,5 @@
 let chart;
 
-/* ===== CALCULOS ===== */
-
 function calculateIRPF(income) {
   if (income <= 40750) return 0;
 
@@ -24,19 +22,23 @@ function calculateFONASA(income) {
   return income * 0.06;
 }
 
-/* ===== MAIN ===== */
-
 function calculate() {
   const salary = Number(document.getElementById("salary").value);
   const type = document.getElementById("type").value;
+  const children = document.getElementById("children").checked;
 
   if (!salary) {
     document.getElementById("result").innerHTML = "Ingresá un sueldo válido";
     return;
   }
 
-  const irpf = calculateIRPF(salary);
+  let irpf = calculateIRPF(salary);
   const fonasa = calculateFONASA(salary);
+
+  /* ajuste simple si tiene hijos */
+  if (children) {
+    irpf *= 0.9;
+  }
 
   let extra = 0;
 
@@ -44,8 +46,6 @@ function calculate() {
   if (type === "dismissal") extra = salary * 0.4;
 
   const neto = salary - irpf - fonasa + extra;
-
-  /* ===== RESULTADO ===== */
 
   document.getElementById("result").innerHTML = `
     💰 Bruto: $${salary}<br>
@@ -56,31 +56,11 @@ function calculate() {
     🧾 Neto: $${neto.toFixed(2)}
   `;
 
-  /* ===== PREVIEW ===== */
-
-  const preview = document.getElementById("preview");
-
-  if (preview) {
-    preview.innerHTML = `
-      <strong>Resumen</strong><br><br>
-      Bruto: $${salary}<br>
-      IRPF: $${irpf.toFixed(2)}<br>
-      FONASA: $${fonasa.toFixed(2)}<br>
-      Neto: $${neto.toFixed(2)}
-    `;
-  }
-
-  /* ===== GRAFICO ===== */
-
   drawChart(irpf, fonasa, extra, neto);
 }
 
-/* ===== CHART ===== */
-
 function drawChart(irpf, fonasa, extra, neto) {
   const ctx = document.getElementById("chart");
-
-  if (!ctx) return;
 
   if (chart) chart.destroy();
 
@@ -90,15 +70,12 @@ function drawChart(irpf, fonasa, extra, neto) {
       labels: ["IRPF", "FONASA", "Extra", "Neto"],
       datasets: [{
         data: [irpf, fonasa, extra, neto],
-
-        /* 🔥 COLORES */
         backgroundColor: [
-          "#ff5c5c",   // rojo IRPF
-          "#3b82f6",   // azul FONASA
-          "#10b981",   // verde extra
-          "#1e293b"    // oscuro neto
+          "#ff5c5c",
+          "#3b82f6",
+          "#10b981",
+          "#1e293b"
         ],
-
         borderWidth: 2,
         borderColor: "#0f0f14"
       }]
