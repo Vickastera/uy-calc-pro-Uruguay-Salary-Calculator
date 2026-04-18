@@ -8,7 +8,7 @@ Una calculadora de salario para Uruguay que permite estimar sueldo **neto**, des
 
 ## 🚀 Demo en vivo
 
-🔗 https://vickastera.github.io/uy-calc-pro/
+🔗 https://vickastera.github.io/uy-calc-pro-Uruguay-Salary-Calculator/
 
 ---
 
