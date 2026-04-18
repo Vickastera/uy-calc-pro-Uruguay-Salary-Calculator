@@ -29,6 +29,7 @@ function calculate() {
 
   const neto = salary - irpf - fonasa + extra;
 
+  // RESULTADO
   document.getElementById("result").innerHTML = `
     💰 Bruto: $${salary}<br>
     📊 IRPF: $${irpf.toFixed(2)}<br>
@@ -36,6 +37,14 @@ function calculate() {
     ➕ Extra: $${extra.toFixed(2)}<br>
     <hr>
     🧾 Neto: $${neto.toFixed(2)}
+  `;
+
+  // PREVIEW
+  document.getElementById("preview").innerHTML = `
+    💰 Bruto: $${salary}<br>
+    IRPF: $${irpf.toFixed(2)}<br>
+    FONASA: $${fonasa.toFixed(2)}<br>
+    Neto: $${neto.toFixed(2)}
   `;
 
   drawChart(irpf, fonasa, extra, neto);
@@ -51,18 +60,8 @@ function drawChart(irpf, fonasa, extra, neto) {
     data: {
       labels: ["IRPF", "FONASA", "Extra", "Neto"],
       datasets: [{
-        data: [irpf, fonasa, extra, neto],
-        backgroundColor: ["#ff4d4d", "#4da6ff", "#00cc88", "#ffffff"]
+        data: [irpf, fonasa, extra, neto]
       }]
-    },
-    options: {
-      plugins: {
-        legend: {
-          labels: {
-            color: "white"
-          }
-        }
-      }
     }
   });
 }
