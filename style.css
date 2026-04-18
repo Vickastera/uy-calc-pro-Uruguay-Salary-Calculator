@@ -1,20 +1,14 @@
 body {
-  margin: 0;
   font-family: Arial;
-  background: #0b0f1a;
+  background: #0f0f14;
   color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+  text-align: center;
+  padding: 30px;
 }
 
-.container {
-  width: 360px;
-  background: #121a2a;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+.app {
+  max-width: 400px;
+  margin: auto;
 }
 
 input {
@@ -24,23 +18,41 @@ input {
 }
 
 button {
-  width: 100%;
   padding: 10px;
-  margin-top: 8px;
-  background: gold;
-  border: none;
-  font-weight: bold;
+  margin: 5px;
   cursor: pointer;
-}
-
-button:hover {
-  background: #e0bc5a;
 }
 
 #result {
   margin-top: 20px;
+  text-align: left;
+  background: #1c1c24;
+  padding: 15px;
+  border-radius: 10px;
 }
 
-canvas {
-  margin-top: 20px;
+/* PDF STYLE (banco) */
+.pdf-card {
+  width: 400px;
+  padding: 25px;
+  background: white;
+  color: black;
+  position: absolute;
+  left: -9999px;
+  border-radius: 10px;
+  font-family: Arial;
+}
+
+.pdf-card h2 {
+  text-align: center;
+}
+
+.watermark {
+  position: absolute;
+  font-size: 40px;
+  opacity: 0.05;
+  transform: rotate(-30deg);
+  top: 40%;
+  left: 10%;
+  font-weight: bold;
 }
