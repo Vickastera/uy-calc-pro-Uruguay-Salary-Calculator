@@ -1,39 +1,52 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Calculadora Sueldo Uruguay PRO</title>
+  <meta charset="UTF-8" />
+  <title>Sueldo Uruguay PRO</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-<div class="container">
+  <div class="app">
 
-  <h1>💰 Sueldo Uruguay PRO</h1>
+    <h1>💰 Sueldo Uruguay PRO</h1>
 
-  <input id="salary" type="number" placeholder="Sueldo mensual">
+    <input id="salary" type="number" placeholder="Ingresá sueldo bruto" />
 
-  <div class="row">
     <label>
-      <input type="checkbox" id="children">
+      <input type="checkbox" id="children" />
       Con hijos
     </label>
+
+    <button onclick="calculate()">Calcular</button>
+    <button onclick="downloadPDF()">Descargar PDF</button>
+
+    <div id="result"></div>
+
+    <!-- PDF TEMPLATE -->
+    <div id="pdf" class="pdf-card">
+      <h2>💰 Sueldo Uruguay PRO</h2>
+
+      <p><strong>Bruto:</strong> $<span id="p-bruto"></span></p>
+      <p><strong>IRPF:</strong> $<span id="p-irpf"></span></p>
+      <p><strong>FONASA:</strong> $<span id="p-fonasa"></span></p>
+      <p><strong>Aguinaldo:</strong> $<span id="p-aguinaldo"></span></p>
+      <p><strong>Renuncia:</strong> $<span id="p-renuncia"></span></p>
+
+      <hr />
+
+      <h3>🧾 Neto: $<span id="p-neto"></span></h3>
+
+      <div class="watermark">VICKASTERA</div>
+    </div>
+
   </div>
 
-  <button onclick="calculate()">Calcular</button>
-  <button onclick="downloadPDF()">Descargar PDF</button>
-
-  <div id="result"></div>
-
-  <canvas id="chart"></canvas>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
