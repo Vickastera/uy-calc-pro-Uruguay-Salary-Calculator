@@ -12,6 +12,9 @@ function calculateIRPF(income) {
 function calculateFONASA(income) {
   return income * 0.06;
 }
+function calculateBps(income) {
+  return income * 0.15;
+}
 function aguinaldoBruto(salary, months) {
   return (salary * months) / 12;
 }
@@ -55,6 +58,7 @@ if (!days || days < 1 || days > 30) {
 
   let extra = 0;
   let extraLabel = "";
+  let bps = calculateBps(salary);
 
   if (type === "resignation") {
     extra = salary * 0.2;
@@ -71,8 +75,8 @@ if (!days || days < 1 || days > 30) {
     extraLabel = "Indemnización por despido";
   }
 
-  const neto = salary - irpf - fonasa + extra;
-  const netoWithoutExtra = salary - irpf - fonasa;
+  const neto = salary - irpf - fonasa - bps + extra;
+  const netoWithoutExtra = salary - irpf - fonasa - bps;
   
 
   document.getElementById("result").innerHTML = `
@@ -80,6 +84,7 @@ if (!days || days < 1 || days > 30) {
     📊 IRPF: $${irpf.toFixed(2)}<br>
     🏥 FONASA: $${fonasa.toFixed(2)}<br>
     📆 Meses: ${months}<br>
+    📉 BPS: $${bps.toFixed(2)}<br>
     ${document.getElementById("vacation").checked ? `📅 Días: ${days}<br>` : ""}
     ${type === "dismissal" ? `📅 Años: ${years}<br>` : ""}
     ${type === "vacation" ? `📅 Días de licencia: ${days}<br>` : ""}
@@ -91,18 +96,18 @@ if (!days || days < 1 || days > 30) {
    ${document.getElementById("vacation").checked ? `🏖️ Salario vacacional: $${calculateVacation(netoWithoutExtra, days).toFixed(2)}` : ""}
   `;
     document.getElementById("downloadPDF").disabled = false; 
-  drawChart(irpf, fonasa, extra, neto, extraLabel);
+  drawChart(irpf, fonasa, extra, neto, bps, extraLabel);
 }
 
 
 /* GRAFICO */
-function drawChart(irpf, fonasa, extra, neto, extraLabel) {
+function drawChart(irpf, fonasa, extra, neto, bps, extraLabel) {
   const ctx = document.getElementById("chart");
   if (chart) chart.destroy();
 
-  const labels = ["IRPF", "FONASA"];
-  const data = [irpf, fonasa];
-  const colors = ["#ff5c5c", "#3b82f6"];
+  const labels = ["IRPF", "FONASA", "BPS"];
+  const data = [irpf, fonasa, bps];
+  const colors = ["#ff5c5c", "#3b82f6", "#f59e0b"];
 
   if (extra > 0) {
     labels.push(extraLabel || "Extra");
@@ -144,7 +149,7 @@ function downloadPDF() {
   let irpf = calculateIRPF(salary);
   const fonasa = calculateFONASA(salary);
   if (children) irpf *= 0.9;
-
+  let bps = calculateBps(salary);
   let extra = 0;
   let extraLabel = "";
 
@@ -159,8 +164,8 @@ function downloadPDF() {
     extraLabel = "Indemnización por despido";
   }
 
-  const neto = salary - irpf - fonasa + extra;
-  const netoWithoutExtra = salary - irpf - fonasa;
+  const neto = salary - irpf - fonasa - bps + extra;
+  const netoWithoutExtra = salary - irpf - fonasa - bps;
 
 
   const { jsPDF } = window.jspdf;
@@ -178,10 +183,11 @@ function downloadPDF() {
   }
   pdf.text(`IRPF: $${irpf.toFixed(2)}`, 20, 65);
   pdf.text(`FONASA: $${fonasa.toFixed(2)}`, 20, 75);
+  pdf.text(`BPS: $${bps.toFixed(2)}`, 20, 85);
   if (extra > 0) {
-    pdf.text(`${extraLabel}: $${extra.toFixed(2)}`, 20, 85);
+    pdf.text(`${extraLabel}: $${extra.toFixed(2)}`, 20, 95);
   }
-  pdf.line(20, 95, 190, 95);
+  pdf.line(20, 105, 190, 105);
   pdf.setFontSize(16);
   pdf.text(`NETO: $${neto.toFixed(2)}`, 20, 110);
   pdf.text(`Aguinaldo Bruto: $${aguinaldoBruto(salary, months).toFixed(2)}`, 20, 120);
